@@ -1,4 +1,4 @@
-#Clone basique de reddit sous forme statique (version dynamique en cours de réa.)
+#Clone basique de reddit sous forme dynamique
 <hr>
 <h3>Utilisation</h3>
 <ul>
@@ -10,7 +10,7 @@
 
 #DEMO
 
-<a href="http://ondego.be/angular/basic-reddit-clone/#/accueil">http://ondego.be/angular/basic-reddit-clone/#/accueil</a>
+<strike><a href="http://ondego.be/angular/basic-reddit-clone/#/accueil">http://ondego.be/angular/basic-reddit-clone/#/accueil</a></strike>
 
 
 <img src="http://www.ondego.be/divers/basicRedditCloneStatique.png" />
