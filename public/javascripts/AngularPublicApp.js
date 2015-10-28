@@ -12,7 +12,12 @@ app
                 .state('accueil', {
                     url: '/accueil',
                     templateUrl: 'templates/accueil.html',
-                    controller: 'ControlleurPrincipal'
+                    controller: 'ControlleurPrincipal',
+                    resolve: {
+                                postPromise: ['posts', function(posts){
+                                    return posts.getAll();
+                                }]
+                            }
                 })
                 .state('posts', {
                     url: '/posts/:id',
@@ -125,55 +130,67 @@ app
     //... someone trying to have persistent data in his or her controller. That’s just not the purpose of a controller
     //For memory purposes, controllers are instantiated only when they are needed and discarded when they are not. Because of this, every time you switch a route or reload a page, Angular
     //cleans up the current controller. Services however provide a means for keeping data around for the lifetime of an application while they also can be used across different controllers in a consistent manner.
-    .factory('postsFactory', [function(){
+    .factory('postsFactory','$http', [function($http){
 
         //You'll note that we could have simply exported the posts array directly,
         // however, by exporting an object that contains the posts array we can add new objects and methods to our services in the future.
 
-           var o={
-               posts:[
-                {"id":0,"titre": ' la chasse',"lien":"http://www.google.fr", "description":"Je suis 0 la description du post, je peux faire autant de caractères que je veux, je suis la description !!!!!! ", "voteNegatifs":1,"votesPositifs": 55,
-                    date:"2015-10-26T13:03:20.711Z",comments: [
-                    {auteur: 'Joe', body: 'Cool post!', votePositifs: 0,voteNegatifs: 0},
-                    {auteur: 'Bob', body: 'Great idea but everything is wrong!', votePositifs: 0,voteNegatifs: 0}
-                ]},
-                {"id":1,"titre": ' la voiture',"lien":"http://www.google.fr", "description":"Je suis 1 la description du post, je peux faire autant de caractères que je veux, je suis la description !!!!!! ", "voteNegatifs":1,"votesPositifs": 55,
-                    date:"2015-10-26T16:03:20.711Z",comments: [
-                    {auteur: 'Joe', body: 'Cool post!', votePositifs: 0,voteNegatifs: 0},
-                    {auteur: 'Bob', body: 'Great idea but everything is wrong!', votePositifs: 0,voteNegatifs: 0}
-                ]},
-                {"id":2,"titre": ' la course',"lien":"http://www.google.fr", "description":"Je suis 2 la description du post, je peux faire autant de caractères que je veux, je suis la description !!!!!! ", "voteNegatifs":1,"votesPositifs": 66,
-                    date:"2015-10-26T17:03:20.711Z",comments: [
-                    {auteur: 'Joe', body: 'Cool post!', votePositifs: 0,voteNegatifs: 0},
-                    {auteur: 'Bob', body: 'Great idea but everything is wrong!', votePositifs: 0,voteNegatifs: 0}
-                ]},
-                {"id":3,"titre": ' l\'aviation',"lien":"http://www.google.fr", "description":"Je suis 3 la description du post, je peux faire autant de caractères que je veux, je suis la description !!!!!! ", "voteNegatifs":1,"votesPositifs": 15,
-                    date:"2015-10-26T23:03:20.711Z",comments: [
-                    {auteur: 'Joe', body: 'Cool post!', votePositifs: 0,voteNegatifs: 0},
-                    {auteur: 'Bob', body: 'Great idea but everything is wrong!', votePositifs: 0,voteNegatifs: 0}
-                ]},
-                {"id":4,"titre": ' la danse',"lien":"http://www.google.fr", "description":"Je suis 4 la description du post, je peux faire autant de caractères que je veux, je suis la description !!!!!! ", "voteNegatifs":1,"votesPositifs":  9,
-                    date:"2015-10-26T21:03:20.711Z",comments: [
-                    {auteur: 'Joe', body: 'Cool post!', votePositifs: 0,voteNegatifs: 0},
-                    {auteur: 'Bob', body: 'Great idea but everything is wrong!', votePositifs: 0,voteNegatifs: 0}
-                ]},
-                {"id":5,"titre": ' la cuisine',"lien":"http://www.google.fr", "description":"Je suis 5 la description du post, je peux faire autant de caractères que je veux, je suis la description !!!!!! ", "voteNegatifs":111,"votesPositifs":4,
-                    date:"2015-10-26T11:03:20.711Z",comments: [
-                    {auteur: 'Joe', body: 'Cool post!', votePositifs: 0,voteNegatifs: 0},
-                    {auteur: 'Bob', body: 'Great idea but everything is wrong!', votePositifs: 0,voteNegatifs: 0}
-                ]},
-                {"id":6,"titre": ' le sport',"lien":"http://www.google.fr", "description":"Je suis 6 la description du post, je peux faire autant de caractères que je veux, je suis la description !!!!!! ", "voteNegatifs":1,"votesPositifs":  0,
-                    date:"2015-10-26T06:03:20.711Z",comments: [
-                    {auteur: 'Joe', body: 'Cool post!', votePositifs: 0,voteNegatifs: 0},
-                    {auteur: 'Bob', body: 'Great idea but everything is wrong!', votePositifs: 0,voteNegatifs: 0}
-                ]},
-                {"id":7,"titre": ' le web',"lien":"http://www.google.fr", "description":"Je suis 7 la description du post, je peux faire autant de caractères que je veux, je suis la description !!!!!! ", "voteNegatifs":15,"votesPositifs": 1,
-                    date:"2015-10-26T03:03:20.711Z",comments: [
-                    {auteur: 'Joe', body: 'Cool post!', votePositifs: 0,voteNegatifs: 0},
-                    {auteur: 'Bob', body: 'Great idea but everything is wrong!', votePositifs: 0,voteNegatifs: 0}
-                ]}
-            ]
-    };
+        var o = {
+            posts: []
+        };
+
+
+        o.getAll = function() {
+            return $http.get('/posts').success(function(data){
+                angular.copy(data, o.posts);
+            });
+        };
+
+        //*************************DATA STATIQUES
+   //       var o={
+   //           posts:[
+   //            {"id":0,"titre": ' la chasse',"lien":"http://www.google.fr", "description":"Je suis 0 la description du post, je peux faire autant de caractères que je veux, je suis la description !!!!!! ", "voteNegatifs":1,"votesPositifs": 55,
+   //                date:"2015-10-26T13:03:20.711Z",comments: [
+   //                {auteur: 'Joe', body: 'Cool post!', votePositifs: 0,voteNegatifs: 0},
+   //                {auteur: 'Bob', body: 'Great idea but everything is wrong!', votePositifs: 0,voteNegatifs: 0}
+   //            ]},
+   //            {"id":1,"titre": ' la voiture',"lien":"http://www.google.fr", "description":"Je suis 1 la description du post, je peux faire autant de caractères que je veux, je suis la description !!!!!! ", "voteNegatifs":1,"votesPositifs": 55,
+   //                date:"2015-10-26T16:03:20.711Z",comments: [
+   //                {auteur: 'Joe', body: 'Cool post!', votePositifs: 0,voteNegatifs: 0},
+   //                {auteur: 'Bob', body: 'Great idea but everything is wrong!', votePositifs: 0,voteNegatifs: 0}
+   //            ]},
+   //            {"id":2,"titre": ' la course',"lien":"http://www.google.fr", "description":"Je suis 2 la description du post, je peux faire autant de caractères que je veux, je suis la description !!!!!! ", "voteNegatifs":1,"votesPositifs": 66,
+   //                date:"2015-10-26T17:03:20.711Z",comments: [
+   //                {auteur: 'Joe', body: 'Cool post!', votePositifs: 0,voteNegatifs: 0},
+   //                {auteur: 'Bob', body: 'Great idea but everything is wrong!', votePositifs: 0,voteNegatifs: 0}
+   //            ]},
+   //            {"id":3,"titre": ' l\'aviation',"lien":"http://www.google.fr", "description":"Je suis 3 la description du post, je peux faire autant de caractères que je veux, je suis la description !!!!!! ", "voteNegatifs":1,"votesPositifs": 15,
+   //                date:"2015-10-26T23:03:20.711Z",comments: [
+   //                {auteur: 'Joe', body: 'Cool post!', votePositifs: 0,voteNegatifs: 0},
+   //                {auteur: 'Bob', body: 'Great idea but everything is wrong!', votePositifs: 0,voteNegatifs: 0}
+   //            ]},
+   //            {"id":4,"titre": ' la danse',"lien":"http://www.google.fr", "description":"Je suis 4 la description du post, je peux faire autant de caractères que je veux, je suis la description !!!!!! ", "voteNegatifs":1,"votesPositifs":  9,
+   //                date:"2015-10-26T21:03:20.711Z",comments: [
+   //                {auteur: 'Joe', body: 'Cool post!', votePositifs: 0,voteNegatifs: 0},
+   //                {auteur: 'Bob', body: 'Great idea but everything is wrong!', votePositifs: 0,voteNegatifs: 0}
+   //            ]},
+   //            {"id":5,"titre": ' la cuisine',"lien":"http://www.google.fr", "description":"Je suis 5 la description du post, je peux faire autant de caractères que je veux, je suis la description !!!!!! ", "voteNegatifs":111,"votesPositifs":4,
+   //                date:"2015-10-26T11:03:20.711Z",comments: [
+   //                {auteur: 'Joe', body: 'Cool post!', votePositifs: 0,voteNegatifs: 0},
+   //                {auteur: 'Bob', body: 'Great idea but everything is wrong!', votePositifs: 0,voteNegatifs: 0}
+   //            ]},
+   //            {"id":6,"titre": ' le sport',"lien":"http://www.google.fr", "description":"Je suis 6 la description du post, je peux faire autant de caractères que je veux, je suis la description !!!!!! ", "voteNegatifs":1,"votesPositifs":  0,
+   //                date:"2015-10-26T06:03:20.711Z",comments: [
+   //                {auteur: 'Joe', body: 'Cool post!', votePositifs: 0,voteNegatifs: 0},
+   //                {auteur: 'Bob', body: 'Great idea but everything is wrong!', votePositifs: 0,voteNegatifs: 0}
+   //            ]},
+   //            {"id":7,"titre": ' le web',"lien":"http://www.google.fr", "description":"Je suis 7 la description du post, je peux faire autant de caractères que je veux, je suis la description !!!!!! ", "voteNegatifs":15,"votesPositifs": 1,
+   //                date:"2015-10-26T03:03:20.711Z",comments: [
+   //                {auteur: 'Joe', body: 'Cool post!', votePositifs: 0,voteNegatifs: 0},
+   //                {auteur: 'Bob', body: 'Great idea but everything is wrong!', votePositifs: 0,voteNegatifs: 0}
+   //            ]}
+   //        ]
+   //};
         return o;
 }]);
 
