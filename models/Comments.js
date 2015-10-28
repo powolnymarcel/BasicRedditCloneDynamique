@@ -8,5 +8,16 @@ var CommentSchema = new mongoose.Schema({
     post: { type: mongoose.Schema.Types.ObjectId, ref: 'Post' }
 });
 
+
+
+PostSchema.methods.plus = function(cb) {
+    this.votePositifs += 1;
+    this.save(cb);
+};
+
+PostSchema.methods.moins = function(cb) {
+    this.voteNegatifs -= 1;
+    this.save(cb);
+};
 mongoose.model('Comment', CommentSchema);
 

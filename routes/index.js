@@ -50,14 +50,32 @@ router.param('post', function(req, res, next, id) {
     return next();
   });
 });
-//ON va chercher via cette route là ;)
-router.get('/posts/:post', function(req, res) {
-  //La res(respond) va tout droit au client
-  res.json(req.post);
+router.get('/posts/:post', function(req, res, next) {
+  req.post.populate('comments', function(err, post) {
+    if (err) { return next(err); }
+
+    res.json(post);
+  });
 });
 
+//Ajout route pour voter en positif sur le commentaire ! ;)
+router.put('/posts/:post/comments/:comment/votePositifs', function(req, res, next) {
+  req.comment.plus(function(err, comment){
+    if (err) { return next(err); }
 
-// Via cette route on fait un +1 pour le post
+    res.json(comment);
+  });
+});
+//Ajout route pour voter en négatif sur le commentaire ! :-(
+router.put('/posts/:post/comments/:comment/voteNegatifs', function(req, res, next) {
+  req.comment.moins(function(err, comment){
+    if (err) { return next(err); }
+
+    res.json(comment);
+  });
+});
+
+// Via cette route on fait un +1 au vote Positifs pour le post
 router.put('/posts/:post/votePositifs', function(req, res, next) {
   req.post.plus(function(err, post){
     if (err) { return next(err); }
@@ -67,12 +85,30 @@ router.put('/posts/:post/votePositifs', function(req, res, next) {
 });
 
 
-// Via cette route on fait un +1 pour le post
+// Via cette route on fait un +1 au vote negatif pour le post
 router.put('/posts/:post/voteNegatifs', function(req, res, next) {
   req.post.moins(function(err, post){
     if (err) { return next(err); }
 
     res.json(post);
+  });
+});
+
+
+
+router.post('/posts/:post/comments', function(req, res, next) {
+  var comment = new Comment(req.body);
+  comment.post = req.post;
+
+  comment.save(function(err, comment){
+    if(err){ return next(err); }
+
+    req.post.comments.push(comment);
+    req.post.save(function(err, post) {
+      if(err){ return next(err); }
+
+      res.json(comment);
+    });
   });
 });
 
