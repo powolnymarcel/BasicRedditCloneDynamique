@@ -14,7 +14,7 @@ app
                     templateUrl: 'templates/accueil.html',
                     controller: 'ControlleurPrincipal',
                     resolve: {
-                                postPromise: ['posts', function(posts){
+                                postPromise: ['postsFactory', function(posts){
                                     return posts.getAll();
                                 }]
                             }
@@ -30,6 +30,7 @@ app
     //*******************************************************************************************************************************CONTROLLEUR
     // ***************************************************************************************ControlleurPrincipal
     .controller('ControlleurPrincipal', ['$scope','$filter','postsFactory',function($scope,$filter,postsFactory){
+        alert('r');
         // Vas chercher dans le factory les data
         $scope.posts = postsFactory.posts;
         console.log($scope.posts);
@@ -130,22 +131,22 @@ app
     //... someone trying to have persistent data in his or her controller. That’s just not the purpose of a controller
     //For memory purposes, controllers are instantiated only when they are needed and discarded when they are not. Because of this, every time you switch a route or reload a page, Angular
     //cleans up the current controller. Services however provide a means for keeping data around for the lifetime of an application while they also can be used across different controllers in a consistent manner.
-    .factory('postsFactory','$http', [function($http){
+    .factory('postsFactory', ['$http',function($http){
 
         //You'll note that we could have simply exported the posts array directly,
         // however, by exporting an object that contains the posts array we can add new objects and methods to our services in the future.
 
-        var o = {
-            posts: []
-        };
+       var o = {
+           posts: []
+       };
 
 
-        o.getAll = function() {
-            return $http.get('/posts').success(function(data){
-                angular.copy(data, o.posts);
-            });
-        };
-
+       o.getAll = function () {
+           return $http.get('/posts')
+               .success(function (data) {
+                   angular.copy(data, o.posts);
+               });
+       };
         //*************************DATA STATIQUES
    //       var o={
    //           posts:[
