@@ -6,20 +6,20 @@
     </div>
 <div class="row tags">
 Trier:
-            <a href="#" ng-click="sortType = 'votesPositifs'; sortReverse = !sortReverse" class="btn btn-sm btn-default">
+            <a href="#" ng-click="sortType = 'votePositifs'; sortReverse = !sortReverse" class="btn btn-sm btn-default">
                 Votes positifs
-                <span ng-show="sortType == 'votesPositifs' && !sortReverse" class="glyphicon glyphicon-chevron-down"></span>
-                <span ng-show="sortType == 'votesPositifs' && sortReverse" class="glyphicon glyphicon-chevron-up"></span>
+                <span ng-show="sortType == 'votePositifs' && !sortReverse" class="glyphicon glyphicon-chevron-down"></span>
+                <span ng-show="sortType == 'votePositifs' && sortReverse" class="glyphicon glyphicon-chevron-up"></span>
             </a>
             <a href="#" ng-click="sortType = 'voteNegatifs'; sortReverse = !sortReverse" class="btn btn-sm btn-default">
                 Votes negatifs
                 <span ng-show="sortType == 'voteNegatifs' && !sortReverse" class="glyphicon glyphicon-chevron-down"></span>
                 <span ng-show="sortType == 'voteNegatifs' && sortReverse" class="glyphicon glyphicon-chevron-up"></span>
             </a>
-            <a href="#" ng-click="sortType = 'voteNegatifs+votesPositifs'; sortReverse = !sortReverse" class="btn btn-sm btn-default">
+            <a href="#" ng-click="sortType = 'voteNegatifs+votePositifs'; sortReverse = !sortReverse" class="btn btn-sm btn-default">
                 Votes (total)
-                <span ng-show="sortType == 'voteNegatifs+votesPositifs' && !sortReverse" class="glyphicon glyphicon-chevron-down"></span>
-                <span ng-show="sortType == 'voteNegatifs+votesPositifs' && sortReverse" class="glyphicon glyphicon-chevron-up"></span>
+                <span ng-show="sortType == 'voteNegatifs+votePositifs' && !sortReverse" class="glyphicon glyphicon-chevron-down"></span>
+                <span ng-show="sortType == 'voteNegatifs+votePositifs' && sortReverse" class="glyphicon glyphicon-chevron-up"></span>
             </a>
             <a href="#" ng-click="sortType = 'date'; sortReverse = !sortReverse" class="btn btn-sm btn-default">
                 Votes (date)
@@ -49,14 +49,14 @@ Trier:
         <span ng-click="DiminuerVotePositif(post)" class="glyphicon glyphicon-thumbs-down bouton" ></span>
         <div class="panel panel-primary">
             <div class="panel-heading">
-                <h3 class="panel-title"><strong>{{post.votesPositifs+post.voteNegatifs}} vote<ng-pluralize count="post.votesPositifs"
+                <h3 class="panel-title"><strong>{{post.votePositifs+post.voteNegatifs}} vote<ng-pluralize count="post.votePositifs"
                                                                                                            when="{'0'     : '',
                                                                                     'one'  : '',
                                                                                     'other': 's'}">
                 </ng-pluralize></strong> au total</h3>
             </div>
             <div class="panel-body">
-                <span ng-click="AugmenterVotePositif(post)" class="glyphicon  glyphicon-thumbs-up"></span> : <span class="label label-success">{{post.votesPositifs}}</span> &nbsp; &nbsp; &nbsp;
+                <span ng-click="AugmenterVotePositif(post)" class="glyphicon  glyphicon-thumbs-up"></span> : <span class="label label-success">{{post.votePositifs}}</span> &nbsp; &nbsp; &nbsp;
                 <span  ng-click="DiminuerVotePositif(post)" class="glyphicon  glyphicon-thumbs-down"></span> : <span class="label label-danger">{{post.voteNegatifs}}</span>
             </div>
         </div>

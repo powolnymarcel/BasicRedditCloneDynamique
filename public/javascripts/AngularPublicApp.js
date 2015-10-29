@@ -30,7 +30,6 @@ app
     //*******************************************************************************************************************************CONTROLLEUR
     // ***************************************************************************************ControlleurPrincipal
     .controller('ControlleurPrincipal', ['$scope','$filter','postsFactory',function($scope,$filter,postsFactory){
-        alert('r');
         // Vas chercher dans le factory les data
         $scope.posts = postsFactory.posts;
         console.log($scope.posts);
@@ -39,19 +38,29 @@ app
         $scope.ajouterPost = function(){
             // Eviter que le user laisse le champs vide
             if(!$scope.titre || $scope.titre === '') { return; }
-            // Ajouter au le post au tableau de posts
-            $scope.posts.push({
-                id:$scope.posts.length,
+            // Ajouter au le post au tableau de posts   STATIQUE !!!!!!!
+            //$scope.posts.push({
+            //    id:$scope.posts.length,
+            //    titre: $scope.titre,
+            //    description:$scope.description,
+            //    votesPositifs: 0,
+            //    voteNegatifs: 0,
+            //    lien:$scope.lien,
+            //    date:date,
+            //    comments: [
+            //        {auteur: 'Joe', body: 'Cool post!', votePositifs: 0,voteNegatifs: 0},
+            //        {auteur: 'Bob', body: 'Great idea but everything is wrong!', votePositifs: 0,voteNegatifs: 0}
+            //    ]
+            //});
+            // Ajouter au le post au tableau de posts   DYNAMIQUE !!!!!!!
+
+            postsFactory.create({
                 titre: $scope.titre,
                 description:$scope.description,
-                votesPositifs: 0,
+                votePositifs: 0,
                 voteNegatifs: 0,
                 lien:$scope.lien,
-                date:date,
-                comments: [
-                    {auteur: 'Joe', body: 'Cool post!', votePositifs: 0,voteNegatifs: 0},
-                    {auteur: 'Bob', body: 'Great idea but everything is wrong!', votePositifs: 0,voteNegatifs: 0}
-                ]
+                date:date
             });
             // rendre les champs vide
             $scope.titre=''
@@ -63,7 +72,7 @@ app
 
         // Fn pour augmenter le vote d'un post
         $scope.AugmenterVotePositif = function(post) {
-            post.votesPositifs += 1;
+            post.votePositifs += 1;
         };
         // Fn pour diminuer le vote d'un post
         $scope.DiminuerVotePositif = function(post) {
@@ -88,6 +97,7 @@ app
         // Pour avoir l'id du post(bien faire attention au pluriel 's' ou pas 's')
         $scope.post =  postsFactory.posts[$stateParams.id];
         console.log($scope.post);
+
         $scope.ajoutCommentaire = function(){
             // Si commentaire vide, ne fait rien
             if($scope.body === '' ||null) { return; }
@@ -99,6 +109,7 @@ app
             });
             $scope.body = '';
         };
+
         $scope.AugmenterVotePositif = function(comment) {
             comment.votePositifs += 1;
         };
@@ -140,13 +151,21 @@ app
            posts: []
        };
 
-
+// Recuperer les data sur mongoDB
        o.getAll = function () {
            return $http.get('/posts')
                .success(function (data) {
                    angular.copy(data, o.posts);
                });
        };
+
+// creer  des data sur mongoDB
+
+        o.create = function(post) {
+            return $http.post('/posts', post).success(function(data){
+                o.posts.push(data);
+            });
+        };
         //*************************DATA STATIQUES
    //       var o={
    //           posts:[
