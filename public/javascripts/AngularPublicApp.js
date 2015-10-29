@@ -70,13 +70,14 @@ app
             $scope.cacherLaModal();
         };
 
+
         // Fn pour augmenter le vote d'un post
         $scope.AugmenterVotePositif = function(post) {
-            post.votePositifs += 1;
+            postsFactory.plus(post);
         };
         // Fn pour diminuer le vote d'un post
         $scope.DiminuerVotePositif = function(post) {
-            post.voteNegatifs += 1;
+            postsFactory.moins(post);
         };
 
         $scope.sortType     = 'date'; // set the default sort type
@@ -165,6 +166,21 @@ app
             return $http.post('/posts', post).success(function(data){
                 o.posts.push(data);
             });
+        };
+
+  //Voter
+        o.plus = function(post) {
+            return $http.put('/posts/' + post._id + '/votePositifs')
+                .success(function(data){
+                    post.votePositifs += 1;
+                });
+        };
+        //Voter
+        o.moins = function(post) {
+            return $http.put('/posts/' + post._id + '/voteNegatifs')
+                .success(function(data){
+                    post.voteNegatifs += 1;
+                });
         };
         //*************************DATA STATIQUES
    //       var o={

@@ -16,7 +16,7 @@ CommentSchema.methods.plus = function(cb) {
 };
 
 CommentSchema.methods.moins = function(cb) {
-    this.voteNegatifs -= 1;
+    this.voteNegatifs += 1;
     this.save(cb);
 };
 mongoose.model('Comment', CommentSchema);

@@ -17,7 +17,7 @@ PostSchema.methods.plus = function(cb) {
 };
 
 PostSchema.methods.moins = function(cb) {
-    this.voteNegatifs -= 1;
+    this.voteNegatifs += 1;
     this.save(cb);
 };
 mongoose.model('Post', PostSchema);
