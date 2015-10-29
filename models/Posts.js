@@ -3,6 +3,7 @@ var mongoose = require('mongoose');
 var PostSchema = new mongoose.Schema({
     titre: String,
     lien: String,
+    description: String,
     votePositifs: {type: Number, default: 0},
     voteNegatifs: {type: Number, default: 0},
     date :  {type: Date, default: Date.now},

@@ -52,6 +52,21 @@ router.param('post', function(req, res, next, id) {
     return next();
   });
 });
+
+
+router.param('comment', function(req, res, next, id) {
+  var query = Comment.findById(id);
+
+  query.exec(function (err, comment){
+    if (err) { return next(err); }
+    if (!comment) { return next(new Error("pas de comms")); }
+
+    req.comment = comment;
+    return next();
+  });
+});
+
+
 router.get('/posts/:post', function(req, res, next) {
   req.post.populate('comments', function(err, post) {
     if (err) { return next(err); }
@@ -60,25 +75,9 @@ router.get('/posts/:post', function(req, res, next) {
   });
 });
 
-//Ajout route pour voter en positif sur le commentaire ! ;)
-router.put('/posts/:post/comments/:comment/votePositifs', function(req, res, next) {
-  req.comment.plus(function(err, comment){
-    if (err) { return next(err); }
-
-    res.json(comment);
-  });
-});
-//Ajout route pour voter en négatif sur le commentaire ! :-(
-router.put('/posts/:post/comments/:comment/voteNegatifs', function(req, res, next) {
-  req.comment.moins(function(err, comment){
-    if (err) { return next(err); }
-
-    res.json(comment);
-  });
-});
-
 // Via cette route on fait un +1 au vote Positifs pour le post
 router.put('/posts/:post/votePositifs', function(req, res, next) {
+
   req.post.plus(function(err, post){
     if (err) { return next(err); }
 
@@ -114,6 +113,30 @@ router.post('/posts/:post/comments', function(req, res, next) {
   });
 });
 
+
+//Ajout route pour voter en positif sur le commentaire ! ;)
+router.put('/posts/:post/comments/:comment/voteSurComPositifs', function(req, res, next) {
+  req.comment.plus(function(err, comment){
+    if (err) {
+      return next(err);
+      console.log(comment);
+
+    }  console.log(comment);
+
+    res.json(comment);
+  });
+});
+
+
+
+//Ajout route pour voter en négatif sur le commentaire ! :-(
+router.put('/posts/:post/comments/:comment/voteSurComNegatifs', function(req, res, next) {
+  req.comment.moins(function(err, comment){
+    if (err) { return next(err); }
+
+    res.json(comment);
+  });
+});
 
 
 

@@ -13,6 +13,7 @@ app
                     url: '/accueil',
                     templateUrl: 'templates/accueil.html',
                     controller: 'ControlleurPrincipal',
+                    //Le resolve est la promesse , affichera le contenu si le getAll s'execute bien
                     resolve: {
                                 postPromise: ['postsFactory', function(posts){
                                     return posts.getAll();
@@ -22,7 +23,12 @@ app
                 .state('posts', {
                     url: '/posts/:id',
                     templateUrl: 'templates/post-details.html',
-                    controller: 'PostsCtrl'
+                    controller: 'PostsCtrl',
+                    resolve: {
+                        post: ['$stateParams', 'postsFactory', function($stateParams, postsFactory) {
+                            return postsFactory.get($stateParams.id);
+                        }]
+                    }
                 });
 
             $urlRouterProvider.otherwise('accueil');
@@ -94,22 +100,24 @@ app
 }])
     // *****************************************************************************************************        PostsCtrl
     // On crée un controlleur pour les posts, à ce controlleur on injecte le factory posts pour avoir les data dispo
-    .controller('PostsCtrl', ['$scope','$stateParams','postsFactory', function($scope, $stateParams, postsFactory){
+    .controller('PostsCtrl', ['$scope','$stateParams','postsFactory','post', function($scope, $stateParams, postsFactory,post){
         // Pour avoir l'id du post(bien faire attention au pluriel 's' ou pas 's')
-        $scope.post =  postsFactory.posts[$stateParams.id];
-        console.log($scope.post);
 
-        $scope.ajoutCommentaire = function(){
-            // Si commentaire vide, ne fait rien
-            if($scope.body === '' ||null) { return; }
-            $scope.post.comments.push({
-                body: $scope.body,
-                auteur: 'user',
-                voteNegatifs: 0,
-                votePositifs: 0
-            });
-            $scope.body = '';
-        };
+        $scope.post = post;
+        //$scope.post =  postsFactory.posts[$stateParams.id];
+        //console.log($scope.post);
+//
+        //$scope.ajoutCommentaire = function(){
+        //    // Si commentaire vide, ne fait rien
+        //    if($scope.body === '' ||null) { return; }
+        //    $scope.post.comments.push({
+        //        body: $scope.body,
+        //        auteur: 'user',
+        //        voteNegatifs: 0,
+        //        votePositifs: 0
+        //    });
+        //    $scope.body = '';
+        //};
 
         $scope.AugmenterVotePositif = function(comment) {
             comment.votePositifs += 1;
@@ -117,6 +125,27 @@ app
         // Fn pour diminuer le vote d'un post
         $scope.DiminuerVotePositif = function(comment) {
             comment.voteNegatifs += 1;
+        };
+
+
+        $scope.ajoutCommentaire = function(){
+            if($scope.body === '') { return; }
+            postsFactory.AjoutCommentaireDB(post._id, {
+                body: $scope.body,
+                auteur: 'user',
+                voteNegatifs: 0,
+                votePositifs: 0
+            }).success(function(comment) {
+                $scope.post.comments.push(comment);
+            });
+            $scope.body = '';
+        };
+
+        $scope.AugmenterVoteComPositif = function(comment){
+            postsFactory.plusSurCommentaire(post, comment);
+        };
+        $scope.DiminuerVoteComPositif = function(comment){
+            postsFactory.moinsSurCommentaire(post, comment);
         };
     }])
 
@@ -143,6 +172,9 @@ app
     //... someone trying to have persistent data in his or her controller. That’s just not the purpose of a controller
     //For memory purposes, controllers are instantiated only when they are needed and discarded when they are not. Because of this, every time you switch a route or reload a page, Angular
     //cleans up the current controller. Services however provide a means for keeping data around for the lifetime of an application while they also can be used across different controllers in a consistent manner.
+
+
+    //Le service postsFactory
     .factory('postsFactory', ['$http',function($http){
 
         //You'll note that we could have simply exported the posts array directly,
@@ -160,7 +192,7 @@ app
                });
        };
 
-// creer  des data sur mongoDB
+// creer  des data pour un post sur mongoDB
 
         o.create = function(post) {
             return $http.post('/posts', post).success(function(data){
@@ -168,18 +200,43 @@ app
             });
         };
 
-  //Voter
+  //Voter sur un post
         o.plus = function(post) {
             return $http.put('/posts/' + post._id + '/votePositifs')
                 .success(function(data){
                     post.votePositifs += 1;
                 });
         };
-        //Voter
+        //Votersur un post
         o.moins = function(post) {
             return $http.put('/posts/' + post._id + '/voteNegatifs')
                 .success(function(data){
                     post.voteNegatifs += 1;
+                });
+        };
+
+        //Recuperer les infos d'un post
+        o.get = function(id) {
+            return $http.get('/posts/' + id).then(function(res){
+                return res.data;
+            });
+        };
+
+        //Ajouter un commentaire
+        o.AjoutCommentaireDB = function(id, comment) {
+            return $http.post('/posts/' + id + '/comments', comment);
+        };
+
+        o.plusSurCommentaire = function(post, comment) {
+            return $http.put('/posts/' + post._id + '/comments/'+ comment._id + '/voteSurComPositifs')
+                .success(function(data){
+                    comment.votePositifs += 1;
+                });
+        };
+        o.moinsSurCommentaire = function(post, comment) {
+            return $http.put('/posts/' + post._id + '/comments/'+ comment._id + '/voteSurComNegatifs')
+                .success(function(data){
+                    comment.voteNegatifs += 1;
                 });
         };
         //*************************DATA STATIQUES
