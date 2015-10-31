@@ -68,12 +68,15 @@ app.use(function(err, req, res, next) {
   });
 });
 
-
-
-app.listen(3777, function(){
-  console.log('_________________________________________________________________');
-  console.log('Express écoute sur le port: ', this.address().port +' -  Visitez : localhost:3777');
-  console.log('_________________________________________________________________');
-
+var port = process.env.PORT || 8080;
+app.listen(port, function() {
+  console.log('Our app is running on http://localhost:' + port);
 });
+
+//app.listen(3777, function(){
+//  console.log('_________________________________________________________________');
+//  console.log('Express écoute sur le port: ', this.address().port +' -  Visitez : localhost:3777');
+//  console.log('_________________________________________________________________');
+//
+//});
 module.exports = app;
