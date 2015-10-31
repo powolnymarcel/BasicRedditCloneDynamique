@@ -5,7 +5,15 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/posts');
+//mongoose.connect('mongodb://localhost/posts');
+
+var db = mongoose.connection;
+// -------------------------------_______________----- ICI AJOUTEZ VOS INFOS MONGOLAB !
+var uri= "mongodb://basicredditclone:basicredditclone@ds047504.mongolab.com:47504/basicredditclone"
+
+// MONGOOSE connectes toi sur Mongolab pour les DATA !
+db = mongoose.connect(uri);
+
 
 require('./models/Posts');
 require('./models/Comments');
