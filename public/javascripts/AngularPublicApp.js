@@ -69,9 +69,9 @@ app
                 date:date
             });
             // rendre les champs vide
-            $scope.titre=''
-            $scope.lien=''
-            $scope.description=''
+            $scope.titre='';
+            $scope.lien='';
+            $scope.description='';
             //Appelle la directive pour cacher le formulaire
             $scope.cacherLaModal();
         };
